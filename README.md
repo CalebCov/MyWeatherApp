@@ -1,7 +1,6 @@
 # MyWeatherApp
 Basic weather app using HTML, CSS, and JavaScript
 
-
 <br/>
 
 <div align="center">
