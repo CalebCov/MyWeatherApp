@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <style>
+        /* Basic styles for the body */
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+
+        /* Styles for the container div */
+        .container {
+            text-align: center;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);    
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Weather App</h1>
+        <p>Enter a city name to see the weather:</p>
+        <input type="text" id="cityInput" placeholder="Enter city name">
+        <button onclick="getWeather()">Get Weather</button>
+        <div id="weatherInfo"></div>
+    </div>
+    
+    <script>
+        // Function to fetch weather data from the server
+        function getWeather() {
+            const city = document.getElementById("cityInput").value; // Get the city name from the input field
+            fetch('/weather', {
+                method: 'POST', // Use POST method to send the city name
+                headers: {
+                    'Content-Type': 'application/json', // Send the data as JSON
+                },
+                body: JSON.stringify({ city: city }), // Send the city name in the request body
+            })
+            .then(response => response.json()) // Parse the JSON response
+            .then(data => {
+                const weatherInfo = document.getElementById("weatherInfo"); // Get the weatherInfo div
+                if (data.cod === 200) { // If the request was successful
+                    weatherInfo.innerHTML = `
+                        <h2>${data.name}</h2>
+                        <p>${data.weather[0].description}</p>
+                        <p>Temperature: ${data.main.temp}°C</p>
+                        <p>Humidity: ${data.main.humidity}%</p>
+                    `;
+                } else { // If there was an error
+                    weatherInfo.innerHTML = `<p>${data.message}</p>`;
+                }
+            })
+            .catch(error => { // Handle any errors
+                console.error("There was a problem fetching the weather data:", error);
+                const weatherInfo = document.getElementById("weatherInfo");
+                weatherInfo.innerHTML = "<p>Failed to fetch weather data. Please try again later.</p>";
+            });
+        }
+    </script>
+</body>
+</html>
